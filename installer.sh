@@ -96,7 +96,7 @@ install_nitos_rcs() {
         git clone -b amqp https://github.com/viniciusgb4/nitos_testbed_rc.git
         cd $NITOS_HOME
         gem build nitos_testbed_rc.gemspec
-        gem install nitos_testbed_rc-1.0.2.gem
+        gem install nitos_testbed_rc-2.0.5.gem
 
         install_ntrc
 

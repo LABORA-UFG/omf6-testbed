@@ -235,6 +235,14 @@ install_testbed() {
     echo "Waiting for services start up..."
     sleep 5s
 
+    echo -n "Do you want to install the OML Server? (Y/n)"
+    read option
+    case $option in
+        Y|y) install_oml2 ;;
+        N|n) ;;
+        *) install_oml2 ;;
+    esac
+
     echo -n "Do you want to insert the resources into Broker? (Y/n)"
     read option
     case $option in

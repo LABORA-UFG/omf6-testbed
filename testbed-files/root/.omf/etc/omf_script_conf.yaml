@@ -1,7 +1,7 @@
 :pubsub:
   :protocol: amqp
   :script_user: testbed
-  :password: lab251
+  :password: testbed
   :server: <domain>
 :auth:
   :root_cert_dir: /etc/nitos_testbed_rc/trusted_roots

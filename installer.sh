@@ -214,19 +214,19 @@ install_testbed() {
     service dnsmasq restart
 
     #########################START OF CREATE USER RABBITMQ#####################
-    rabbitmqctl add_user testbed lab251
+    rabbitmqctl add_user testbed testbed
     rabbitmqctl set_permissions -p / testbed ".*" ".*" ".*"
 
-    rabbitmqctl add_user cm_user lab251
+    rabbitmqctl add_user cm_user testbed
     rabbitmqctl set_permissions -p / cm_user ".*" ".*" ".*"
 
-    rabbitmqctl add_user frisbee_user lab251
+    rabbitmqctl add_user frisbee_user testbed
     rabbitmqctl set_permissions -p / frisbee_user ".*" ".*" ".*"
 
-    rabbitmqctl add_user script_user lab251
+    rabbitmqctl add_user script_user testbed
     rabbitmqctl set_permissions -p / script_user ".*" ".*" ".*"
 
-    rabbitmqctl add_user user_proxy_user lab251
+    rabbitmqctl add_user user_proxy_user testbed
     rabbitmqctl set_permissions -p / user_proxy_user ".*" ".*" ".*"
     #########################END OF CREATE USER RABBITMQ#####################
 

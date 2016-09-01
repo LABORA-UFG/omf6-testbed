@@ -22,7 +22,7 @@ omf_sfa_am:
       type: pubsub
       protocol: amqp
       user: testbed
-      password: lab251
+      password: testbed
       server: <domain>
       pubsub_opt:
         require: omf-sfa/am/am-amqp/am_amqp

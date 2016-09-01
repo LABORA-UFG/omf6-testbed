@@ -20,7 +20,7 @@
 :pxeSymLinkConfFile: pxeconfig
 
 #operation mode for OmfCommon.init (development, production, etc)
-:operationMode: development
+:operationMode: production
 
 #testbed pubsub topic
 :testbedTopic: am_controller

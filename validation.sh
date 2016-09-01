@@ -55,7 +55,7 @@ execute_omf6_save() {
 }
 
 execute_tutorial() {
-    omf_ec -u amqp://testbed:testbed@localhost exec --oml_uri tcp:localhost:3003 /root/ec-test/tutorial.rb
+    omf_ec -u amqp://testbed:lab251@10.129.11.206 exec --oml_uri tcp:10.129.11.206:3003 /root/ec-test/tutorial.rb
 }
 
 main() {

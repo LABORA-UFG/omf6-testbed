@@ -51,7 +51,7 @@ TEXT
   end
 end
 
-defGroup('Sender', "icarus5") do |node|
+defGroup('Sender', "icarus1") do |node|
   node.addApplication("otg2") do |app|
     app.setProperty('udp_local_host', '192.16.0.2')
     app.setProperty('udp_dst_host', '192.16.0.3')
@@ -65,7 +65,7 @@ defGroup('Sender', "icarus5") do |node|
   node.net.w0.ip = "192.16.0.2/24"
 end
 
-defGroup('Receiver', "icarus6") do |node|
+defGroup('Receiver', "icarus3") do |node|
   node.addApplication("otr2") do |app|
     app.setProperty('udp_local_host', '192.16.0.3')
     app.setProperty('udp_local_port', 3000)

@@ -196,7 +196,7 @@ install_oml2() {
     echo "deb-src http://download.opensuse.org/repositories/home:/cdwertmann:/oml/xUbuntu_14.04/ ./" >> /etc/apt/sources.list
 
     apt-get update
-    apt-get install oml2-server
+    apt-get install -y --force-yes oml2-server
 }
 
 install_testbed() {

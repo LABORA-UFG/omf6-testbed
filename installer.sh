@@ -128,7 +128,7 @@ download_omf() {
 }
 
 install_omf() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_all_dependencies
     fi
 
@@ -145,7 +145,7 @@ install_omf() {
 }
 
 install_omf_common_gem() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_omf_dependencies
     fi
 
@@ -169,7 +169,7 @@ install_omf_rc_dependencies() {
 }
 
 install_omf_rc_gem() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_omf_rc_dependencies
     fi
 
@@ -191,7 +191,7 @@ install_omf_rc_gem() {
 }
 
 install_omf_ec_gem() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_omf_basic_dependencies
     fi
 
@@ -217,7 +217,7 @@ remove_omf() {
 }
 
 install_openflow_related_rcs() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_omf_basic_dependencies
     fi
 
@@ -235,7 +235,7 @@ install_openflow_related_rcs() {
 }
 
 install_flowvisor_rc_gem() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_omf_basic_dependencies
     fi
 
@@ -262,7 +262,7 @@ remove_openflow_rcs() {
 }
 
 install_broker() {
-    if [ $1 == "--install_dependencies" ]; then
+    if [[ $1 == "--install_dependencies" ]]; then
         install_all_dependencies
         install_omf_common_gem
     fi

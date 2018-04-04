@@ -301,6 +301,8 @@ install_broker() {
         echo "###############CONFIGURING OMF_SFA AS UPSTART SERVICE###############"
         cp init/omf-sfa.conf /etc/init/ && sed -i '/chdir \/root\/omf\/omf_sfa/c\chdir \/root\/omf_sfa' /etc/init/omf-sfa.conf
         #End of Broker installation
+
+        create_broker_rabbitmq_user
     fi
 }
 
@@ -346,6 +348,8 @@ install_nitos_rcs() {
         ##END OF CERTIFICATES CONFIGURATION
         #End of NITOS Testbed RCs installation
         rm -rf $NITOS_HOME
+
+        configure_rabbimq_users
     fi
 }
 
@@ -449,6 +453,25 @@ remove_testbed() {
     remove_testbed_configuration
 }
 
+create_broker_rabbitmq_user() {
+    rabbitmqctl add_user testbed testbed
+    rabbitmqctl set_permissions -p / testbed ".*" ".*" ".*"
+}
+
+create_nitos_rabbimq_users() {
+    rabbitmqctl add_user cm_user testbed
+    rabbitmqctl set_permissions -p / cm_user ".*" ".*" ".*"
+
+    rabbitmqctl add_user frisbee_user testbed
+    rabbitmqctl set_permissions -p / frisbee_user ".*" ".*" ".*"
+
+    rabbitmqctl add_user script_user testbed
+    rabbitmqctl set_permissions -p / script_user ".*" ".*" ".*"
+
+    rabbitmqctl add_user user_proxy_user testbed
+    rabbitmqctl set_permissions -p / user_proxy_user ".*" ".*" ".*"
+}
+
 install_testbed() {
     install_all_dependencies
 
@@ -462,21 +485,8 @@ install_testbed() {
 
     service dnsmasq restart
 
-    #########################START OF CREATE USER RABBITMQ#####################
-    rabbitmqctl add_user testbed testbed
-    rabbitmqctl set_permissions -p / testbed ".*" ".*" ".*"
-
-    rabbitmqctl add_user cm_user testbed
-    rabbitmqctl set_permissions -p / cm_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user frisbee_user testbed
-    rabbitmqctl set_permissions -p / frisbee_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user script_user testbed
-    rabbitmqctl set_permissions -p / script_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user user_proxy_user testbed
-    rabbitmqctl set_permissions -p / user_proxy_user ".*" ".*" ".*"
+    #########################START OF CREATE USER RABBITMQ###################
+    create_nitos_rabbimq_users
     #########################END OF CREATE USER RABBITMQ#####################
 
     start_broker

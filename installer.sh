@@ -327,6 +327,10 @@ remove_broker() {
 }
 
 install_nitos_rcs() {
+    if [ "$1" == "--configure" ]; then
+        $INSTALLER_HOME/configure.sh
+    fi
+
     if ! gem list nitos_testbed_rc -i; then
         #Start of NITOS Testbed RCs installation
         install_frisbee
@@ -561,7 +565,7 @@ main() {
     3) reinstall_testbed ;;
     4) install_broker "--install_dependencies" ;;
     5) remove_broker ;;
-    6) install_nitos_rcs ;;
+    6) install_nitos_rcs "--configure";;
     7) remove_nitos_rcs ;;
     8) insert_nodes ;;
     9) download_baseline_image ;;

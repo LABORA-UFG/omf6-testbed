@@ -1,7 +1,7 @@
 #pubsub details
 :pubsub:
   :protocol: amqp
-  :username: testbed
+  :username: cm_proxy
   :password: testbed
   :server: <domain>
 #x509 certificates to be used by user_proxy
@@ -9,6 +9,7 @@
   :root_cert_dir: /root/.omf/trusted_roots
   :entity_cert: /root/.omf/frisbee_factory.pem
   :entity_key: /root/.omf/frisbee_factory.pkey
+  :ch_key: /root/.omf/omf_control.chkey
 
 # URL for the rest interface of the broker
 :broker_url: https://<domain>:8001

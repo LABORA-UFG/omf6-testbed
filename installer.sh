@@ -349,7 +349,10 @@ install_nitos_rcs() {
         #End of NITOS Testbed RCs installation
         rm -rf $NITOS_HOME
 
-        configure_rabbimq_users
+        create_rabbitmq_user cm_proxy testbed
+        create_rabbitmq_user frisbee_proxy testbed
+        create_rabbitmq_user script_user testbed
+        create_rabbitmq_user user_proxy testbed
     fi
 }
 
@@ -458,18 +461,9 @@ create_broker_rabbitmq_user() {
     rabbitmqctl set_permissions -p / testbed ".*" ".*" ".*"
 }
 
-create_nitos_rabbimq_users() {
-    rabbitmqctl add_user cm_user testbed
-    rabbitmqctl set_permissions -p / cm_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user frisbee_user testbed
-    rabbitmqctl set_permissions -p / frisbee_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user script_user testbed
-    rabbitmqctl set_permissions -p / script_user ".*" ".*" ".*"
-
-    rabbitmqctl add_user user_proxy_user testbed
-    rabbitmqctl set_permissions -p / user_proxy_user ".*" ".*" ".*"
+create_rabbitmq_user() {
+    rabbitmqctl add_user "$1" "$2"
+    rabbitmqctl set_permissions -p / "$1" ".*" ".*" ".*"
 }
 
 install_testbed() {

@@ -1,7 +1,7 @@
 #pubsub details
 :pubsub:
   :protocol: amqp
-  :username: testbed
+  :username: user_proxy
   :password: testbed
   :server: <domain>
 #x509 certificates to be used by user_proxy

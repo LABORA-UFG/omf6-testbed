@@ -22,10 +22,11 @@ install_all_dependencies() {
        wget \
        zlib1g-dev
 
-       install_virtinst
-       install_frisbee
-       install_omf_dependencies
-       check_and_install_ruby
+    install_virtinst
+    install_frisbee
+    install_omf_dependencies
+    check_and_install_ruby
+    install_start_command
 }
 
 install_virtinst() {
@@ -46,6 +47,46 @@ install_omf_dependencies() {
     apt-get install -y --force-yes --reinstall \
         build-essential \
         libssl-dev
+}
+
+check_linux_version() {
+    if [ -f /etc/os-release ]; then
+        # freedesktop.org and systemd
+        . /etc/os-release
+        OS=$NAME
+        VER=$VERSION_ID
+    elif type lsb_release >/dev/null 2>&1; then
+        # linuxbase.org
+        OS=$(lsb_release -si)
+        VER=$(lsb_release -sr)
+    elif [ -f /etc/lsb-release ]; then
+        # For some versions of Debian/Ubuntu without lsb_release command
+        . /etc/lsb-release
+        OS=$DISTRIB_ID
+        VER=$DISTRIB_RELEASE
+    elif [ -f /etc/debian_version ]; then
+        # Older Debian/Ubuntu/etc.
+        OS=Debian
+        VER=$(cat /etc/debian_version)
+    elif [ -f /etc/SuSe-release ]; then
+        # Older SuSE/etc.
+        ...
+    elif [ -f /etc/redhat-release ]; then
+        # Older Red Hat, CentOS, etc.
+        ...
+    else
+        # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+        OS=$(uname -s)
+        VER=$(uname -r)
+    fi
+}
+
+install_start_command() {
+    check_linux_version
+    if [ "$OS" = "Ubuntu" ] && [ "$VER" = "16.04" ]; then
+        apt-get install upstart-sysv -y
+        update-initramfs -u
+    fi
 }
 
 check_and_install_ruby() {

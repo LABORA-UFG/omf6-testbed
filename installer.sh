@@ -484,10 +484,6 @@ install_testbed() {
 
     service dnsmasq restart
 
-    #########################START OF CREATE USER RABBITMQ###################
-    create_nitos_rabbimq_users
-    #########################END OF CREATE USER RABBITMQ#####################
-
     start_broker
     start_nitos_rcs
 

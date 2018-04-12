@@ -327,10 +327,6 @@ remove_broker() {
 }
 
 install_nitos_rcs() {
-    if [ "$1" == "--configure" ]; then
-        $INSTALLER_HOME/configure.sh
-    fi
-
     if ! gem list nitos_testbed_rc -i; then
         #Start of NITOS Testbed RCs installation
         install_frisbee
@@ -342,6 +338,11 @@ install_nitos_rcs() {
         gem install nitos_testbed_rc-2.0.5.gem
 
         install_ntrc
+
+        if [ "$1" == "--configure" ]; then
+            $INSTALLER_HOME/configure.sh
+            cp -r /tmp/testbed-files/etc/nitos_testbed_rc /etc/
+        fi
 
         ##START OF CERTIFICATES CONFIGURATION
         echo "###############CONFIGURING NITOS TESTBED RCS CERTIFICATES###############"

@@ -110,8 +110,8 @@ After install the Flowvisor RC, you need to edit the file /etc/omf_rc/flowvisor_
   :email: "nothing@nowhere"
 </pre>
 
-* In <DOMAIN> you need to put the domain of your island.
-* In <FLOWVISOR-VERSION> you need to put the version of the flowvisor running in your island. You may get this version by running the command:
+* In \<DOMAIN\> you need to put the domain of your island.
+* In \<FLOWVISOR-VERSION\> you need to put the version of the flowvisor running in your island. You may get this version by running the command:
   
   
     apt-cache policy flowvisor
@@ -137,7 +137,7 @@ The output of the command is something like this:
 
 The version of your flowvisor is the line marked with ***. In the above example, the value of <FLOWVISOR-VERSION> will be "0.8.17". 
 
-* In <FVADMIN-PASSWORD> you need to put the password of the Flowvisor fvadmin user.
+* In <\FVADMIN-PASSWORD\> you need to put the password of the Flowvisor fvadmin user.
 
 Modules Explanation
 -------------------

@@ -24,6 +24,8 @@ Configuration
 -------------
 Before execute the installer script, it is necessary to change some configuration files.
 
+* At variables.conf: you have to change the values of the variables DOMAIN, AM_SERVER_DOMAIN and XMPP_DOMAIN to the domain of your institution. For example, the value of UFG is ufg.br.
+
 * At conf/nodes.conf: you have to put a list of icarus nodes with its ips and macs.
 
 * At conf/interface-service-map.conf: you have to configure the interface interface of the control network.
@@ -60,7 +62,8 @@ The following options will be prompted. To choose an option you have just to wri
     14. Install OMF RC
     15. Install OMF EC
     16. Install Flowvisor RC
-    17. Exit
+    17. (Re)create broker certificates
+    18. Exit
     
     Choose an option...
     

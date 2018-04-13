@@ -344,6 +344,9 @@ install_broker() {
         git clone -b amqp https://github.com/LABORA-UFG/omf_sfa.git
         cd $OMF_SFA_HOME
         echo "###############INSTALLING OMF_SFA###############"
+        if ! gem list bundler -i; then
+            gem install bundler --no-ri --no-rdoc
+        fi
         bundle install
 
         echo "###############RAKE DB:MIGRATE###############"

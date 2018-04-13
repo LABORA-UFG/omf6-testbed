@@ -288,6 +288,7 @@ install_openflow_related_rcs() {
         install_omf_basic_dependencies
     fi
 
+    install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
     cd $OMF_OPENFLOW_RCS_HOME
@@ -306,6 +307,7 @@ install_flowvisor_rc_gem() {
         install_omf_basic_dependencies
     fi
 
+    install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
     cd $OMF_OPENFLOW_RCS_HOME

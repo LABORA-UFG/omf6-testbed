@@ -358,14 +358,7 @@ install_broker() {
         ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
 
         ##START OF CERTIFICATES CONFIGURATION
-        echo "###############CONFIGURING OMF_SFA CERTIFICATES###############"
-        mkdir -p /root/.omf/trusted_roots
-        omf_cert.rb --email root@$DOMAIN -o /root/.omf/trusted_roots/root.pem --duration 50000000 create_root
-        omf_cert.rb -o /root/.omf/am.pem  --geni_uri URI:urn:publicid:IDN+$AM_SERVER_DOMAIN+user+am --email am@$DOMAIN --resource-id amqp://am_controller@$XMPP_DOMAIN --resource-type am_controller --root /root/.omf/trusted_roots/root.pem --duration 50000000 create_resource
-        omf_cert.rb -o /root/.omf/user_cert.pem --geni_uri URI:urn:publicid:IDN+$AM_SERVER_DOMAIN+user+root --email root@$DOMAIN --user root --root /root/.omf/trusted_roots/root.pem --duration 50000000 create_user
-
-        openssl rsa -in /root/.omf/am.pem -outform PEM -out /root/.omf/am.pkey
-        openssl rsa -in /root/.omf/user_cert.pem -outform PEM -out /root/.omf/user_cert.pkey
+        create_broker_cerficates
         ##END OF CERTIFICATES CONFIGURATION
 
         echo "###############CONFIGURING OMF_SFA AS UPSTART SERVICE###############"
@@ -374,6 +367,17 @@ install_broker() {
 
         create_broker_rabbitmq_user
     fi
+}
+
+create_broker_cerficates() {
+    echo "###############CONFIGURING OMF_SFA CERTIFICATES###############"
+    mkdir -p /root/.omf/trusted_roots
+    omf_cert.rb --email root@$DOMAIN -o /root/.omf/trusted_roots/root.pem --duration 50000000 create_root
+    omf_cert.rb -o /root/.omf/am.pem  --geni_uri URI:urn:publicid:IDN+$AM_SERVER_DOMAIN+user+am --email am@$DOMAIN --resource-id amqp://am_controller@$XMPP_DOMAIN --resource-type am_controller --root /root/.omf/trusted_roots/root.pem --duration 50000000 create_resource
+    omf_cert.rb -o /root/.omf/user_cert.pem --geni_uri URI:urn:publicid:IDN+$AM_SERVER_DOMAIN+user+root --email root@$DOMAIN --user root --root /root/.omf/trusted_roots/root.pem --duration 50000000 create_user
+
+    openssl rsa -in /root/.omf/am.pem -outform PEM -out /root/.omf/am.pkey
+    openssl rsa -in /root/.omf/user_cert.pem -outform PEM -out /root/.omf/user_cert.pkey
 }
 
 remove_broker() {
@@ -409,10 +413,10 @@ install_nitos_rcs() {
 
         install_ntrc
 
-        if [ "$1" == "--configure" ]; then
-            $INSTALLER_HOME/configure.sh
-            cp -r /tmp/testbed-files/etc/nitos_testbed_rc /etc/
-        fi
+#        if [ "$1" == "--configure" ]; then
+#            $INSTALLER_HOME/configure.sh
+#            cp -r /tmp/testbed-files/etc/nitos_testbed_rc /etc/
+#        fi
 
         ##START OF CERTIFICATES CONFIGURATION
         echo "###############CONFIGURING NITOS TESTBED RCS CERTIFICATES###############"
@@ -544,7 +548,7 @@ create_rabbitmq_user() {
 install_testbed() {
     install_all_dependencies
 
-    $INSTALLER_HOME/configure.sh
+    #$INSTALLER_HOME/configure.sh
 
     install_omf
     install_amqp_server
@@ -607,6 +611,9 @@ main() {
     if [ "$WILL_REBOOT" = yes ]; then
         exit 0
     fi
+
+    $INSTALLER_HOME/configure.sh
+
     echo "------------------------------------------"
     echo "Options:"
     echo
@@ -626,7 +633,8 @@ main() {
     echo "14. Install OMF RC"
     echo "15. Install OMF EC"
     echo "16. Install Flowvisor RC"
-    echo "17. Exit"
+    echo "17. (Re)create broker certificates"
+    echo "18. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -647,6 +655,7 @@ main() {
     14) install_omf_rc_gem "--install_dependencies" ;;
     15) install_omf_ec_gem "--install_dependencies" ;;
     16) install_flowvisor_rc_gem "--install_dependencies" ;;
+    17) create_broker_cerficates ;;
     *) exit ;;
     esac
 }

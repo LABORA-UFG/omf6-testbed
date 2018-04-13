@@ -137,7 +137,7 @@ The output of the command is something like this:
 
 The version of your flowvisor is the line marked with ***. In the above example, the value of <FLOWVISOR-VERSION> will be "0.8.17". 
 
-* In <\FVADMIN-PASSWORD\> you need to put the password of the Flowvisor fvadmin user.
+* In \<FVADMIN-PASSWORD\> you need to put the password of the Flowvisor fvadmin user.
 
 Modules Explanation
 -------------------

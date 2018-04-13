@@ -70,5 +70,72 @@ The following options will be prompted. To choose an option you have just to wri
 Option number 1 will install in a single machine the rabbitmq server, the [omf6 modules](https://github.com/LABORA-UFG/omf) (omf_common, omf_rc, omf_ec), the [NITOS testbed RCs](https://github.com/LABORA-UFG/nitos_testbed_rc), and the Broker ([omf_sfa project](https://github.com/LABORA-UFG/omf_sfa)). That option will also install the OML server and download the icarus baseline image.
 Option number 8 will insert at the Broker's inventory the icarus nodes configured in the [conf/nodes.conf](conf/nodes.conf) file. Option 10 will configure the RC on icarus nodes. The other options are quite intuitive.
 
+Flowvisor RC Configuration
+-------------------
+
+After install the Flowvisor RC, you need to edit the file /etc/omf_rc/flowvisor_proxy_conf.yaml. 
+
+    #details to be used for the connection to the pubsub server
+    :pubsub:
+      :protocol: amqp
+      :username: testbed
+      :password: testbed
+      :server: <DOMAIN>
+    
+    #operation mode for OmfCommon.init (development, production, etc)
+    :operationMode: development
+    
+    :uid: <%= Socket.gethostname %>-fw
+    
+    #The default arguments of the communication between this resource and the flowvisor instance
+    :flowvisor:
+      #The version of the flowvisor that this resource is able to control
+      :version: "FV version=flowvisor-<FLOWVISOR-VERSION>"
+    
+      :host: "localhost"
+      :path: "/xmlrc"
+      :port: "8080"
+      #proxy_host: ""
+      #proxy_port: ""
+      :user: "fvadmin"
+      :password: "<FVADMIN-PASSWORD>"
+      :use_ssl: "true"
+      :timeout: 60
+    
+    #The default parameters of a new slice. The openflow controller is assumed to be
+    #in the same working station with flowvisor instance
+    :slice:
+      :passwd: "1234"
+      :email: "nothing@nowhere"
+
+* In <DOMAIN> you need to put the domain of your island.
+* In <FLOWVISOR-VERSION> you need to put the version of the flowvisor running in your island. You may get this version by running the command:
+  
+  
+    apt-cache policy flowvisor
+
+The output of the command is something like this:
+
+         1.0.2-1 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+         1.0.1-1 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+         1.0.0-1 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+     *** 0.8.17-3 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+            100 /var/lib/dpkg/status
+         0.8.17-2 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+         0.8.17-1 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+         0.8.16-1 0
+            500 http://updates.onlab.us/debian/ stable/ Packages
+         0.8.15-1 0
+
+The version of your flowvisor is the line marked with ***. In the above example, the value of <FLOWVISOR-VERSION> will be "0.8.17". 
+
+* In <FVADMIN-PASSWORD> you need to put the password of the Flowvisor fvadmin user.
+
 Modules Explanation
 -------------------

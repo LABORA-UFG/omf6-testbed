@@ -110,6 +110,7 @@ install_start_command() {
     apt-get install upstart-sysv -y
     update-initramfs -u
     reboot
+    WILL_REBOOT="yes"
 }
 
 check_and_install_ruby() {
@@ -598,6 +599,9 @@ reinstall_testbed() {
 
 main() {
     check_and_install_start_command
+    if [ "$WILL_REBOOT" = yes ]; then
+        exit 0
+    fi
     echo "------------------------------------------"
     echo "Options:"
     echo

@@ -238,7 +238,7 @@ install_omf_rc_gem() {
         install_omf_rc_dependencies
     fi
 
-    omf_common_installed="gem list -i omf_common"
+    omf_common_installed=$(gem list -i omf_common)
     echo "OMF Common already installed? $omf_common_installed"
     if [ "$omf_common_installed" == "false" ]; then
         echo "INSTALLING OMF COMMON GEM"

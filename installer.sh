@@ -26,7 +26,6 @@ install_all_dependencies() {
     install_frisbee
     install_omf_dependencies
     check_and_install_ruby
-    install_start_command
 }
 
 install_virtinst() {
@@ -81,12 +80,36 @@ check_linux_version() {
     fi
 }
 
-install_start_command() {
+check_and_install_start_command() {
     check_linux_version
-    if [ "$OS" = "Ubuntu" ] && [ "$VER" = "16.04" ]; then
-        apt-get install upstart-sysv -y
-        update-initramfs -u
+    check_for_start_command
+    if [ "$OS" = "Ubuntu" ] && [ "$VER" = "16.04" ] && [ "$START_INSTALLED" = "no" ]; then
+        echo "This machine uses Ubuntu 16.04 and needs to install the upstart-sysv so that the OMF modules work."
+        echo "This operation will reboot your machine. After the reboot, run the installer.sh script again."
+        echo "Do you want to install the upstart-sysv package? (Y/n)"
+        read option
+        case $option in
+            Y|y) install_start_command;;
+            N|n) ;;
+            *) install_start_command;;
+        esac
     fi
+}
+
+check_for_start_command() {
+    if [ $(dpkg-query -W -f='${Status}' upstart-sysv 2>/dev/null | grep -c "ok installed") -eq 0 ];
+    then
+      START_INSTALLED="no"
+    else
+      START_INSTALLED="yes"
+    fi
+}
+
+install_start_command() {
+    echo "INSTALLING upstart-sysv package"
+    apt-get install upstart-sysv -y
+    update-initramfs -u
+    reboot
 }
 
 check_and_install_ruby() {
@@ -574,6 +597,7 @@ reinstall_testbed() {
 }
 
 main() {
+    check_and_install_start_command
     echo "------------------------------------------"
     echo "Options:"
     echo

@@ -76,38 +76,38 @@ Flowvisor RC Configuration
 After install the Flowvisor RC, you need to edit the file /etc/omf_rc/flowvisor_proxy_conf.yaml. 
 
 <pre>
-    #details to be used for the connection to the pubsub server
-    :pubsub:
-      :protocol: amqp
-      :username: testbed
-      :password: testbed
-      :server: <b>&lt;DOMAIN&gt;</b>
-    
-    #operation mode for OmfCommon.init (development, production, etc)
-    :operationMode: development
-    
-    :uid: <%= Socket.gethostname %>-fw
-    
-    #The default arguments of the communication between this resource and the flowvisor instance
-    :flowvisor:
-      #The version of the flowvisor that this resource is able to control
-      :version: "FV version=flowvisor-<b>&lt;FLOWVISOR-VERSION&gt;</b>"
-    
-      :host: "localhost"
-      :path: "/xmlrc"
-      :port: "8080"
-      #proxy_host: ""
-      #proxy_port: ""
-      :user: "fvadmin"
-      :password: "<b>&lt;FVADMIN-PASSWORD&gt;</b>"
-      :use_ssl: "true"
-      :timeout: 60
-    
-    #The default parameters of a new slice. The openflow controller is assumed to be
-    #in the same working station with flowvisor instance
-    :slice:
-      :passwd: "1234"
-      :email: "nothing@nowhere"
+#details to be used for the connection to the pubsub server
+:pubsub:
+  :protocol: amqp
+  :username: testbed
+  :password: testbed
+  :server: <b>&lt;DOMAIN&gt;</b>
+
+#operation mode for OmfCommon.init (development, production, etc)
+:operationMode: development
+
+:uid: <%= Socket.gethostname %>-fw
+
+#The default arguments of the communication between this resource and the flowvisor instance
+:flowvisor:
+  #The version of the flowvisor that this resource is able to control
+  :version: "FV version=flowvisor-<b>&lt;FLOWVISOR-VERSION&gt;</b>"
+
+  :host: "localhost"
+  :path: "/xmlrc"
+  :port: "8080"
+  #proxy_host: ""
+  #proxy_port: ""
+  :user: "fvadmin"
+  :password: "<b>&lt;FVADMIN-PASSWORD&gt;</b>"
+  :use_ssl: "true"
+  :timeout: 60
+
+#The default parameters of a new slice. The openflow controller is assumed to be
+#in the same working station with flowvisor instance
+:slice:
+  :passwd: "1234"
+  :email: "nothing@nowhere"
 </pre>
 
 * In <DOMAIN> you need to put the domain of your island.

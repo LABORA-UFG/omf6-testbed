@@ -203,7 +203,7 @@ install_omf() {
     install_omf_common_gem
 
     #Install omf_rc
-    install_omf_rc_gem
+    install_omf_rc_gem "--configure"
 
     #Install omf_ec
     install_omf_ec_gem
@@ -251,7 +251,17 @@ install_omf_rc_gem() {
     gem build omf_rc.gemspec
     gem install omf_rc-*.gem
 
-    install_omf_rc -i -c
+
+    HAS_TO_CONFIG=0
+
+    for i in $*; do
+       if [[ "$i" == "--configure" ]]; then
+           HAS_TO_CONFIG=1
+       fi
+    done
+    if [[ "$HAS_TO_CONFIG" == 1 ]]; then
+        install_omf_rc -i -c
+    fi
 
 }
 
@@ -652,7 +662,7 @@ main() {
     11) install_openflow_related_rcs "--install_dependencies" ;;
     12) remove_openflow_rcs ;;
     13) install_omf "--install_dependencies" ;;
-    14) install_omf_rc_gem "--install_dependencies" ;;
+    14) install_omf_rc_gem "--install_dependencies" "--configure";;
     15) install_omf_ec_gem "--install_dependencies" ;;
     16) install_flowvisor_rc_gem "--install_dependencies" ;;
     17) create_broker_cerficates ;;

@@ -83,17 +83,17 @@ check_linux_version() {
 check_and_install_start_command() {
     check_linux_version
     check_for_start_command
-    if [ "$OS" = "Ubuntu" ] && [ "$VER" = "16.04" ] && [ "$START_INSTALLED" = "no" ]; then
-        echo "This machine uses Ubuntu 16.04 and needs to install the upstart-sysv so that the OMF modules work."
-        echo "This operation will reboot your machine. After the reboot, run the installer.sh script again."
-        echo "Do you want to install the upstart-sysv package? (Y/n)"
-        read option
-        case $option in
-            Y|y) install_start_command;;
-            N|n) ;;
-            *) install_start_command;;
-        esac
-    fi
+#    if [ "$OS" = "Ubuntu" ] && [ "$VER" = "16.04" ] && [ "$START_INSTALLED" = "no" ]; then
+#        echo "This machine uses Ubuntu 16.04 and needs to install the upstart-sysv so that the OMF modules work."
+#        echo "This operation will reboot your machine. After the reboot, run the installer.sh script again."
+#        echo "Do you want to install the upstart-sysv package? (Y/n)"
+#        read option
+#        case $option in
+#            Y|y) install_start_command;;
+#            N|n) ;;
+#            *) install_start_command;;
+#        esac
+#    fi
 }
 
 check_for_start_command() {
@@ -372,7 +372,14 @@ install_broker() {
         ##END OF CERTIFICATES CONFIGURATION
 
         echo "###############CONFIGURING OMF_SFA AS UPSTART SERVICE###############"
-        cp init/omf-sfa.conf /etc/init/ && sed -i '/chdir \/root\/omf\/omf_sfa/c\chdir \/root\/omf_sfa' /etc/init/omf-sfa.conf
+        if [ "$OS" = "Ubuntu" ] && [ "$VER" != "14.04" ]; then
+            cp init/omf-sfa.service /etc/systemd/system/
+            chmod 664 /etc/systemd/system/omf-sfa.service
+            systemctl daemon-reload
+            systemctl enable omf-sfa.service
+        else
+            cp init/omf-sfa.conf /etc/init/ && sed -i '/chdir \/root\/omf\/omf_sfa/c\chdir \/root\/omf_sfa' /etc/init/omf-sfa.conf
+        fi
         #End of Broker installation
 
         create_broker_rabbitmq_user

@@ -106,11 +106,11 @@ check_for_start_command() {
 }
 
 install_start_command() {
-    echo "INSTALLING upstart-sysv package"
-    apt-get install upstart-sysv -y
-    update-initramfs -u
-    reboot
-    WILL_REBOOT="yes"
+#    echo "INSTALLING upstart-sysv package"
+#    apt-get install upstart-sysv -y
+#    update-initramfs -u
+#    reboot
+#    WILL_REBOOT="yes"
 }
 
 check_and_install_ruby() {
@@ -373,11 +373,13 @@ install_broker() {
 
         echo "###############CONFIGURING OMF_SFA AS UPSTART SERVICE###############"
         if [ "$OS" = "Ubuntu" ] && [ "$VER" != "14.04" ]; then
+            echo "Configuring systemd..."
             cp init/omf-sfa.service /etc/systemd/system/
             chmod 664 /etc/systemd/system/omf-sfa.service
             systemctl daemon-reload
             systemctl enable omf-sfa.service
         else
+            echo "Configuring upstart..."
             cp init/omf-sfa.conf /etc/init/ && sed -i '/chdir \/root\/omf\/omf_sfa/c\chdir \/root\/omf_sfa' /etc/init/omf-sfa.conf
         fi
         #End of Broker installation

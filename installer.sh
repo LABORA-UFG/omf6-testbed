@@ -106,6 +106,7 @@ check_for_start_command() {
 }
 
 install_start_command() {
+    echo "SKIPPING upstart-sysv package instalation"
 #    echo "INSTALLING upstart-sysv package"
 #    apt-get install upstart-sysv -y
 #    update-initramfs -u

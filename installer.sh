@@ -401,7 +401,7 @@ create_broker_cerficates() {
 }
 
 remove_broker() {
-    stop omf-sfa
+    service omf-sfa stop
     rm -rf $OMF_SFA_HOME
     rm /etc/init/omf-sfa.conf
     rm -rf /root/.omf/*.pem
@@ -500,12 +500,12 @@ remove_testbed_configuration() {
 
 start_broker() {
     echo "Executing omf_sfa"
-    start omf-sfa
+    service omf-sfa start
 }
 
 start_nitos_rcs() {
     echo "Executing NITOS Testbed RCs"
-    start ntrc
+    service ntrc start
 }
 
 insert_nodes() {

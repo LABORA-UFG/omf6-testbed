@@ -306,7 +306,7 @@ install_omf_ec_gem() {
 }
 
 update_omf_ec_gem() {
-    update_omf_ec_gem # the /etc/omf_ec/conf.yml file is not replaced without --configure
+    install_omf_ec_gem # the /etc/omf_ec/conf.yml file is not replaced without --configure
 }
 
 remove_omf() {

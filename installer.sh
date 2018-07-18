@@ -220,7 +220,10 @@ install_omf_common_gem() {
     cd $OMF_COMMON_HOME
     gem build omf_common.gemspec
     gem install omf_common-*.gem
+}
 
+update_omf_common_gem() {
+    install_omf_common_gem
 }
 
 install_omf_basic_dependencies() {
@@ -674,7 +677,8 @@ main() {
     echo "17. (Re)create broker certificates"
     echo "18. Update OMF RC"
     echo "19. Update OMF EC"
-    echo "20. Exit"
+    echo "20. Update OMF Commom"
+    echo "21. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -698,6 +702,7 @@ main() {
     17) create_broker_cerficates ;;
     18) update_omf_rc_gem ;;
     19) update_omf_ec_gem ;;
+    20) update_omf_common_gem;;
     *) exit ;;
     esac
 }

@@ -673,8 +673,8 @@ main() {
     echo "16. Install Flowvisor RC"
     echo "17. (Re)create broker certificates"
     echo "18. Update OMF RC"
-    echo "18. Update OMF EC"
-    echo "19. Exit"
+    echo "19. Update OMF EC"
+    echo "20. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -697,7 +697,7 @@ main() {
     16) install_flowvisor_rc_gem "--install_dependencies" ;;
     17) create_broker_cerficates ;;
     18) update_omf_rc_gem ;;
-    18) update_omf_ec_gem ;;
+    19) update_omf_ec_gem ;;
     *) exit ;;
     esac
 }

@@ -266,6 +266,10 @@ install_omf_rc_gem() {
 
 }
 
+update_omf_rc_gem() {
+    install_omf_rc_gem # the /etc/omf_rc/conf.yml file is not replaced without --configure
+}
+
 install_omf_ec_gem() {
     if [[ $1 == "--install_dependencies" ]]; then
         install_omf_basic_dependencies
@@ -285,7 +289,21 @@ install_omf_ec_gem() {
     gem build omf_ec.gemspec
     gem install omf_ec-*.gem
 
-    install_omf_ec -c
+    HAS_TO_CONFIG=0
+
+    for i in $*; do
+       if [[ "$i" == "--configure" ]]; then
+           HAS_TO_CONFIG=1
+       fi
+    done
+    if [[ "$HAS_TO_CONFIG" == 1 ]]; then
+        install_omf_ec -c
+    fi
+
+}
+
+update_omf_ec_gem() {
+    update_omf_ec_gem # the /etc/omf_ec/conf.yml file is not replaced without --configure
 }
 
 remove_omf() {
@@ -654,7 +672,9 @@ main() {
     echo "15. Install OMF EC"
     echo "16. Install Flowvisor RC"
     echo "17. (Re)create broker certificates"
-    echo "18. Exit"
+    echo "18. Update OMF RC"
+    echo "18. Update OMF EC"
+    echo "19. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -673,9 +693,11 @@ main() {
     12) remove_openflow_rcs ;;
     13) install_omf "--install_dependencies" ;;
     14) install_omf_rc_gem "--install_dependencies" "--configure";;
-    15) install_omf_ec_gem "--install_dependencies" ;;
+    15) install_omf_ec_gem "--install_dependencies" "--configure";;
     16) install_flowvisor_rc_gem "--install_dependencies" ;;
     17) create_broker_cerficates ;;
+    18) update_omf_rc_gem ;;
+    18) update_omf_ec_gem ;;
     *) exit ;;
     esac
 }

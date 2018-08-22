@@ -192,6 +192,7 @@ download_omf() {
         rm -rf $OMF_HOME
     fi
     git clone -b amqp https://github.com/LABORA-UFG/omf.git
+    git -C ./omf checkout tags/$OMF_VERSION
 }
 
 install_omf() {
@@ -221,7 +222,10 @@ install_omf_common_gem() {
     cd $OMF_COMMON_HOME
     gem build omf_common.gemspec
     gem install omf_common-*.gem
+}
 
+update_omf_common_gem() {
+    install_omf_common_gem
 }
 
 install_omf_basic_dependencies() {
@@ -267,6 +271,10 @@ install_omf_rc_gem() {
 
 }
 
+update_omf_rc_gem() {
+    install_omf_rc_gem # the /etc/omf_rc/conf.yml file is not replaced without --configure
+}
+
 install_omf_ec_gem() {
     if [[ $1 == "--install_dependencies" ]]; then
         install_omf_basic_dependencies
@@ -286,7 +294,21 @@ install_omf_ec_gem() {
     gem build omf_ec.gemspec
     gem install omf_ec-*.gem
 
-    install_omf_ec -c
+    HAS_TO_CONFIG=0
+
+    for i in $*; do
+       if [[ "$i" == "--configure" ]]; then
+           HAS_TO_CONFIG=1
+       fi
+    done
+    if [[ "$HAS_TO_CONFIG" == 1 ]]; then
+        install_omf_ec -c
+    fi
+
+}
+
+update_omf_ec_gem() {
+    install_omf_ec_gem # the /etc/omf_ec/conf.yml file is not replaced without --configure
 }
 
 remove_omf() {
@@ -303,6 +325,7 @@ install_openflow_related_rcs() {
     install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
+    git -C ./omf_rc_openflow checkout tags/$OPENFLOW_RC_VERSION
     cd $OMF_OPENFLOW_RCS_HOME
     gem build omf_rc_openflow.gemspec
     gem install omf_rc_openflow-*.gem
@@ -322,6 +345,7 @@ install_flowvisor_rc_gem() {
     install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
+    git -C ./omf_rc_openflow checkout tags/$OPENFLOW_RC_VERSION
     cd $OMF_OPENFLOW_RCS_HOME
     gem build omf_rc_openflow.gemspec
     gem install omf_rc_openflow-*.gem
@@ -356,6 +380,7 @@ install_broker() {
         echo $(pwd)
         echo $OMF_SFA_HOME
         git clone -b amqp https://github.com/LABORA-UFG/omf_sfa.git
+        git -C ./omf_sfa checkout tags/$BROKER_VERSION
         cd $OMF_SFA_HOME
         echo "###############INSTALLING OMF_SFA###############"
         if ! gem list bundler -i; then
@@ -655,7 +680,10 @@ main() {
     echo "15. Install OMF EC"
     echo "16. Install Flowvisor RC"
     echo "17. (Re)create broker certificates"
-    echo "18. Exit"
+    echo "18. Update OMF RC"
+    echo "19. Update OMF EC"
+    echo "20. Update OMF Commom"
+    echo "21. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -674,9 +702,12 @@ main() {
     12) remove_openflow_rcs ;;
     13) install_omf "--install_dependencies" ;;
     14) install_omf_rc_gem "--install_dependencies" "--configure";;
-    15) install_omf_ec_gem "--install_dependencies" ;;
+    15) install_omf_ec_gem "--install_dependencies" "--configure";;
     16) install_flowvisor_rc_gem "--install_dependencies" ;;
     17) create_broker_cerficates ;;
+    18) update_omf_rc_gem ;;
+    19) update_omf_ec_gem ;;
+    20) update_omf_common_gem;;
     *) exit ;;
     esac
 }

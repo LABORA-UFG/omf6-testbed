@@ -20,7 +20,8 @@ install_all_dependencies() {
        syslinux \
        xmlsec1 \
        wget \
-       zlib1g-dev
+       zlib1g-dev \
+       libpq-dev
 
     install_virtinst
     install_frisbee

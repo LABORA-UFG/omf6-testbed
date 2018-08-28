@@ -6,7 +6,8 @@ TOP_DIR = File.join(BIN_DIR, '..')
 $: << File.join(TOP_DIR, 'lib')
 
 DESCR = %{
-POST a list of VLANs to Broker
+POST a list of VLANs to Broker. Example of use:
+post_vlans.rb -d <domain> -o POST -v 121:130 -c /root/omf_sfa/bin/conf.yaml
 }
 
 require 'optparse'
@@ -27,9 +28,9 @@ operation = nil
 @pkey = nil
 
 op = OptionParser.new
-op.banner = "Usage: #{op.program_name} --conf CONF_FILE --in INPUT_FILE...\n#{DESCR}\n"
+op.banner = "Usage: #{op.program_name} ruby post_vlans.rb -d <domain> -o POST|DELETE -v <first-vlan>:<last-vlan> -c /root/omf_sfa/bin/conf.yaml\n#{DESCR}\n"
 
-op.on '-c', '--conf FILE', "Configuration file with communication info" do |file|
+op.on '-c', '--conf FILE', "Configuration file with communication info. Normally this information are in the file /root/omf_sfa/bin/conf.yaml" do |file|
   require 'yaml'
   if File.exists?(file)
     @y = YAML.load_file(file)
@@ -92,6 +93,8 @@ end
 op.on '-u', '--url (URL)', "You need to pass the Broker's URL" do |u|
   resource_url = u
 end
+
+op.on_tail('-h', "--help", "Show this message") { $stderr.puts op; exit }
 
 rest = op.parse(ARGV) || []
 
@@ -169,7 +172,7 @@ end
 [:domain, :operation, :vlans_list, :resource_url].each {|param|
   puts eval(param.to_s)
   unless eval(param.to_s)
-    raise OptionParser::MissingArgument.new("You need to specify a #{param}")
+    raise OptionParser::MissingArgument.new("You need to specify #{param}. \n#{$stderr.puts op}")
   end
 }
 

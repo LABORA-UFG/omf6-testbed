@@ -29,6 +29,17 @@ install_all_dependencies() {
     check_and_install_ruby
 }
 
+install_postgresql() {
+    apt-get install postgresql -y
+}
+
+create_inventory_db() {
+    su postgres
+    createdb inventory
+    exit
+    rake -I lib db:migrate
+}
+
 install_virtinst() {
     apt-get update
     apt-get install -y --force-yes --reinstall virtinst
@@ -369,6 +380,7 @@ remove_openflow_rcs() {
 install_broker() {
     if [[ $1 == "--install_dependencies" ]]; then
         install_all_dependencies
+        install_postgresql
         install_omf_common_gem
     fi
     #if $OMF_SFA_HOME directory does not exist or is empty
@@ -388,8 +400,8 @@ install_broker() {
         fi
         bundle install
 
-        echo "###############RAKE DB:MIGRATE###############"
-        rake db:migrate
+        echo "###############CREATE DATABASE###############"
+        create_inventory_db
 
         echo "###############CREATING DEFAULT SSH KEY###############"
         ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -q -N ""
@@ -683,7 +695,9 @@ main() {
     echo "18. Update OMF RC"
     echo "19. Update OMF EC"
     echo "20. Update OMF Commom"
-    echo "21. Exit"
+    echo "21. Install PostgreSQL"
+    echo "22. Create Inventory DB in PostresSQL"
+    echo "23. Exit"
     echo
     echo -n "Choose an option..."
     read option
@@ -708,6 +722,8 @@ main() {
     18) update_omf_rc_gem ;;
     19) update_omf_ec_gem ;;
     20) update_omf_common_gem;;
+    21) install_postgresql;;
+    22) create_inventory_db;;
     *) exit ;;
     esac
 }

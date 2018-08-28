@@ -154,7 +154,7 @@ def delete_vlans(vlans_list, domain, resource_url)
     vlans_to_delete.append(vlan_property)
   end
 
-  delete_resource_with_rest("#{resource_url}/vlans", vlans_to_delete, @pem, @pkey, @ch_key)
+  delete_resources_with_rest("#{resource_url}/vlans", vlans_to_delete, @pem, @pkey, @ch_key)
 end
 
 def post_vlans(vlans_list, domain, resource_url)

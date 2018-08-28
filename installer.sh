@@ -392,7 +392,7 @@ install_broker() {
         echo $(pwd)
         echo $OMF_SFA_HOME
         git clone -b amqp https://github.com/LABORA-UFG/omf_sfa.git
-        git -C ./omf_sfa checkout tags/$BROKER_VERSION
+        # git -C ./omf_sfa checkout tags/$BROKER_VERSION
         cd $OMF_SFA_HOME
         echo "###############INSTALLING OMF_SFA###############"
         if ! gem list bundler -i; then

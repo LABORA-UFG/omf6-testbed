@@ -145,16 +145,12 @@ def authorization?
 end
 
 def delete_vlans(vlans_list, domain, resource_url)
-  vlans_to_delete = []
-
   for vlan_num in vlans_list
     vlan_property = {
         :urn => "urn:publicid:IDN+#{domain}+vlan+#{vlan_num}"
     }
-    vlans_to_delete.append(vlan_property)
+    delete_resources_with_rest(resource_url, vlan_property, @pem, @pkey, @ch_key)
   end
-
-  delete_resources_with_rest("#{resource_url}/vlans", vlans_to_delete, @pem, @pkey, @ch_key)
 end
 
 def post_vlans(vlans_list, domain, resource_url)

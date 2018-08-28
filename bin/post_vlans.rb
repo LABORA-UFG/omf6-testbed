@@ -9,12 +9,15 @@ DESCR = %{
 POST a list of VLANs to Broker
 }
 
+require 'optparse'
+
 begin; require 'json/jwt'; rescue Exception; end
 
 comm_type = nil
 resource_url = nil
 domain = nil
 vlans_list = nil
+operation = nil
 @ch_key = nil
 @flowvisor_rc_topic = nil
 @authorization = false
@@ -32,14 +35,6 @@ op.on '-c', '--conf FILE', "Configuration file with communication info" do |file
     @y = YAML.load_file(file)
   else
     error "No such file: #{file}"
-    exit
-  end
-
-  if x = @y[:update_topology_args]
-    @flowvisor_rc_topic = x[:flowvisor_topic]
-    @manual_links_path = x[:manual_links_path]
-  else
-    error "Flowvisor RC details was not found in the configuration file"
     exit
   end
 
@@ -68,7 +63,7 @@ op.on '-d', '--domain (DOMAIN)', "You need to pass the domain of the institution
   domain = d
 end
 
-op.on '-op', '--operation (DELETE|POST)', "You need to say if you want to post or delete a VLAN" do |op|
+op.on '-o', '--operation (DELETE|POST)', "You need to say if you want to post or delete a VLAN" do |op|
   operation = op
 end
 
@@ -97,6 +92,8 @@ end
 op.on '-u', '--url (URL)', "You need to pass the Broker's URL" do |u|
   resource_url = u
 end
+
+rest = op.parse(ARGV) || []
 
 def delete_resources_with_rest(url, res_desc, pem, key, ch_key)
   puts "Delete links through REST.\nURL: #{url}\nRESOURCE DESCRIPTION: \n#{res_desc}\n\n"
@@ -169,7 +166,8 @@ def post_vlans(vlans_list, domain, resource_url)
   end
 end
 
-[:domain, :operation, :vlans, :resource_url].each {|param|
+[:domain, :operation, :vlans_list, :resource_url].each {|param|
+  puts eval(param.to_s)
   unless eval(param.to_s)
     raise OptionParser::MissingArgument.new("You need to specify a #{param}")
   end

@@ -7,7 +7,7 @@ $: << File.join(TOP_DIR, 'lib')
 
 DESCR = %{
 POST a list of VLANs to Broker. Example of use:
-post_vlans.rb -d <domain> -o POST -v 121:130 -c /root/omf_sfa/bin/conf.yaml
+./post_vlans.rb -d <domain> -o POST -v 121:130 -c /root/omf_sfa/bin/conf.yaml
 }
 
 require 'optparse'
@@ -28,7 +28,7 @@ operation = nil
 @pkey = nil
 
 op = OptionParser.new
-op.banner = "Usage: #{op.program_name} ruby post_vlans.rb -d <domain> -o POST|DELETE -v <first-vlan>:<last-vlan> -c /root/omf_sfa/bin/conf.yaml\n#{DESCR}\n"
+op.banner = "Usage: ./#{op.program_name} ruby post_vlans.rb -d <domain> -o POST|DELETE -v <first-vlan>:<last-vlan> -c /root/omf_sfa/bin/conf.yaml\n#{DESCR}\n"
 
 op.on '-c', '--conf FILE', "Configuration file with communication info. Normally this information are in the file /root/omf_sfa/bin/conf.yaml" do |file|
   require 'yaml'

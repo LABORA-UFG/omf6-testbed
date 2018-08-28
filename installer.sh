@@ -203,7 +203,7 @@ download_omf() {
         rm -rf $OMF_HOME
     fi
     git clone -b amqp https://github.com/LABORA-UFG/omf.git
-    git -C ./omf checkout tags/$OMF_VERSION
+    git -C ./omf checkout $OMF_VERSION
 }
 
 install_omf() {
@@ -336,7 +336,7 @@ install_openflow_related_rcs() {
     install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
-    git -C ./omf_rc_openflow checkout tags/$OPENFLOW_RC_VERSION
+    git -C ./omf_rc_openflow checkout $OPENFLOW_RC_VERSION
     cd $OMF_OPENFLOW_RCS_HOME
     gem build omf_rc_openflow.gemspec
     gem install omf_rc_openflow-*.gem
@@ -356,7 +356,7 @@ install_flowvisor_rc_gem() {
     install_omf_rc_gem
     cd /root
     git clone -b master https://github.com/LABORA-UFG/omf_rc_openflow.git
-    git -C ./omf_rc_openflow checkout tags/$OPENFLOW_RC_VERSION
+    git -C ./omf_rc_openflow checkout $OPENFLOW_RC_VERSION
     cd $OMF_OPENFLOW_RCS_HOME
     gem build omf_rc_openflow.gemspec
     gem install omf_rc_openflow-*.gem
@@ -392,7 +392,7 @@ install_broker() {
         echo $(pwd)
         echo $OMF_SFA_HOME
         git clone -b amqp https://github.com/LABORA-UFG/omf_sfa.git
-        # git -C ./omf_sfa checkout tags/$BROKER_VERSION
+        git -C ./omf_sfa checkout $BROKER_VERSION
         cd $OMF_SFA_HOME
         echo "###############INSTALLING OMF_SFA###############"
         if ! gem list bundler -i; then

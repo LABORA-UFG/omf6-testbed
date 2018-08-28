@@ -35,9 +35,8 @@ install_postgresql() {
 }
 
 create_inventory_db() {
-    su postgres
-    createdb inventory
-    exit
+    sudo -u postgres createdb inventory
+    cd $OMF_SFA_HOME
     rake -I lib db:migrate
 }
 

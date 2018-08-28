@@ -30,6 +30,7 @@ install_all_dependencies() {
 }
 
 install_postgresql() {
+    apt-get update
     apt-get install postgresql -y
 }
 

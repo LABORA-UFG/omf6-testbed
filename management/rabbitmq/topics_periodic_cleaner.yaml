@@ -1,0 +1,29 @@
+:period_in_hours: 1
+:authority:
+  :name: 'central'
+  :domain: 'rnp-br'
+  :url: 'http://10.128.0.210:15672'
+:subauthorities:
+    - :name: 'noc'
+      :domain: 'fibre-noc-br'
+      :url: 'http://10.128.11.112:15672'
+
+#    - :name: 'ufg'
+#      :domain: 'fibre-ufg-br'
+#      :url: 'http://10.137.11.206:15672'
+
+    - :name: 'ufba'
+      :domain: 'fibre-ufba-br'
+      :url: 'http://10.144.11.112:15672'
+
+    - :name: 'ufrgs'
+      :domain: 'fibre-ufrgs-br'
+      :url: 'http://10.139.11.206:15672'
+
+#    - :name: 'ufpe'
+#      :domain: 'fibre-ufpe-br'
+#      :url: 'http://10.132.11.112:15672'
+
+    - :name: 'rnp'
+      :domain: 'fibre-rnp-br'
+      :url: 'http://10.136.11.112:15672'

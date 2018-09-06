@@ -1,0 +1,155 @@
+#!/usr/bin/env ruby
+
+BIN_DIR = File.dirname(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)
+TOP_DIR = File.join(BIN_DIR, '..')
+$: << File.join(TOP_DIR, 'lib')
+
+DESCR = %{
+Remove a topic/queue or a set of topics/queues from RabbitMQ Broker.
+
+}
+
+# The following is to work around a bug in activesupport triggered by
+# the JWT library which is used only in the AMQP transport, os it
+# fails quietly if that library is not installed in XMPP deployments
+begin; require 'json/jwt'; rescue Exception; end
+
+
+require 'optparse'
+require 'omf_common'
+require 'highline/import'
+require 'net/http'
+require 'cgi'
+
+OP_MODE = :development
+
+opts = {
+    communication: {
+        #url: 'xmpp://srv.mytestbed.net',
+        #auth: {}
+    },
+    eventloop: { type: :em},
+    logging: {
+        level: 'info'
+    }
+}
+
+@user = nil
+@password = nil
+config = nil
+
+op = OptionParser.new
+op.banner = "Usage: #{op.program_name} [options] topic1 topic2 ...\n#{DESCR}\n"
+op.on '-f', '--file FILE NAME', "Configuration file" do |f|
+  config = YAML.load_file(f)
+end
+
+op.on '-u', '--user USERNAME', "Username of rabbitmq" do |u|
+  @user = u
+end
+
+op.on '-p', '--password PASSWORD', "Password to rabbitmq user given in -u" do |p|
+  @password = p
+end
+
+op.on_tail('-h', "--help", "Show this message") { $stderr.puts op; exit }
+op.parse(ARGV)
+
+unless config and @user and @password
+  $stderr.puts "ERROR: Missing declaration of --file\n\n"
+  $stderr.puts op
+  exit(-1)
+end
+
+def get_request(url)
+  puts "GET #{url}\n"
+
+  uri = URI.parse(url)
+  http = Net::HTTP.new(address=uri.host, port=uri.port)
+
+  request = Net::HTTP::Get.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
+  request.basic_auth @user, @password
+
+  response = http.request(request)
+
+  body = JSON.parse(response.body)
+  body
+end
+
+def put_request(url, res_desc)
+  puts "PUT all topics\n"
+
+  uri = URI.parse(url)
+  http = Net::HTTP.new(address=uri.host, port=uri.port)
+
+  request = Net::HTTP::Put.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
+  request.basic_auth @user, @password
+  request.body = res_desc.to_json
+
+  response = http.request(request)
+
+  body = JSON.parse(response.body)
+  puts body
+  body
+end
+
+def filter_topics_with_pattern(topics, pattern)
+  if pattern == "*"
+    topics
+  else
+    topics.select { |topic| topic["name"] =~ /#{pattern}/ }
+  end
+end
+
+def delete_request(url)
+  puts "DELETE #{url}\n"
+
+  uri = URI.parse(url)
+  http = Net::HTTP.new(uri.host, uri.port)
+
+  request = Net::HTTP::Delete.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
+  request.basic_auth @user, @password
+
+  response = http.request(request)
+
+  JSON.parse(response.body) if response.body
+end
+
+def extract_topics_names(topics)
+  topics.map {|topic| topic["name"]}
+end
+
+def clean_topics(config)
+  puts "Cleaning topics: #{config}"
+  authority = config[:authority]
+  subauthorities = config[:subauthorities]
+
+  authority_url = authority[:url]
+
+  url = "#{authority_url}/api/exchanges"
+  central_topics = get_request(url)
+
+  for subauthority in subauthorities
+    domain = subauthority[:domain]
+    base_url = subauthority[:url]
+
+    filtered_central_topics = filter_topics_with_pattern(central_topics, "federation: .*fed-#{domain}.*")
+
+    url = "#{base_url}/api/exchanges"
+    sub_topics = get_request(url)
+    filtered_sub_topics = filter_topics_with_pattern(sub_topics, "^fed-#{domain}.*")
+    sub_topics_name = extract_topics_names(filtered_sub_topics)
+
+    for central_topic in filtered_central_topics
+      topic_name = central_topic['name'].split(' ')[1].strip()
+      unless sub_topics_name.include? topic_name
+        puts "Deleting topic #{topic_name}"
+        encoded_name = CGI::escape(central_topic['name'])
+        delete_url = "#{authority_url}/api/exchanges/%2f/#{encoded_name}"
+        delete_request(delete_url)
+      end
+    end
+  end
+end
+
+clean_topics(config)

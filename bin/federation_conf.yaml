@@ -60,3 +60,68 @@
         - :name: 'fed-ufrgs'
           :pattern: '^(fed-fibre-ufrgs-br*).*$'
           :definition: 'central-upstream'
+
+    - :url: 'http://10.136.11.112:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-rnp'
+          :pattern: '^(fed-fibre-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+    - :url: 'http://10.144.11.112:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-ufba'
+          :pattern: '^(fed-fibre-ufba-br*).*$'
+          :definition: 'central-upstream'
+
+    - :url: 'http://10.132.11.112:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-ufpe'
+          :pattern: '^(fed-fibre-ufpe-br*).*$'
+          :definition: 'central-upstream'
+
+    - :url: 'http://10.137.11.206:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-ufg'
+          :pattern: '^(fed-fibre-ufg-br*).*$'
+          :definition: 'central-upstream'
+
+    - :url: 'http://10.128.11.112:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-noc'
+          :pattern: '^(fed-fibre-noc-br*).*$'
+          :definition: 'central-upstream'

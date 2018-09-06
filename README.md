@@ -63,12 +63,19 @@ The following options will be prompted. To choose an option you have just to wri
     15. Install OMF EC
     16. Install Flowvisor RC
     17. (Re)create broker certificates
-    18. Exit
+    18. Update OMF RC
+    19. Update OMF EC
+    20. Update OMF Commom
+    21. Install PostgreSQL
+    22. Create Inventory DB in PostresSQL
+    23. Exit  
     
     Choose an option...
     
 Option number 1 will install in a single machine the rabbitmq server, the [omf6 modules](https://github.com/LABORA-UFG/omf) (omf_common, omf_rc, omf_ec), the [NITOS testbed RCs](https://github.com/LABORA-UFG/nitos_testbed_rc), and the Broker ([omf_sfa project](https://github.com/LABORA-UFG/omf_sfa)). That option will also install the OML server and download the icarus baseline image.
 Option number 8 will insert at the Broker's inventory the icarus nodes configured in the [conf/nodes.conf](conf/nodes.conf) file. Option 10 will configure the RC on icarus nodes. The other options are quite intuitive.
+
+Option 22 will create the inventory database (with all its tables) in PostgresSQL.
 
 Flowvisor RC Configuration
 -------------------

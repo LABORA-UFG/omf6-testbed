@@ -1,0 +1,59 @@
+:federation_info:
+  :subauthorities:
+    - :url: 'http://10.128.0.210:15672'
+      :upstreams:
+        - :name: 'noc-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.11.112'
+
+        - :name: 'rnp-upstream'
+          :uri: 'amqp://testbed:testbed@10.136.11.112'
+
+        - :name: 'ufba-upstream'
+          :uri: 'amqp://testbed:testbed@10.144.11.112'
+
+        - :name: 'ufg-upstream'
+          :uri: 'amqp://testbed:testbed@10.137.11.206'
+
+        - :name: 'ufpe-upstream'
+          :uri: 'amqp://testbed:testbed@10.132.11.112'
+
+        - :name: 'ufrgs-upstream'
+          :uri: 'amqp://testbed:testbed@10.139.11.206'
+
+      :policies:
+        - :name: 'noc-federation'
+          :pattern: '^(fed-fibre-noc-br*).*$'
+          :definition: 'noc-upstream'
+
+        - :name: 'rnp-federation'
+          :pattern: '^(fed-fibre-rnp-br*).*$'
+          :definition: 'rnp-upstream'
+
+        - :name: 'ufba-federation'
+          :pattern: '^(fed-fibre-ufba-br*).*$'
+          :definition: 'ufba-upstream'
+
+        - :name: 'ufg-federation'
+          :pattern: '^(fed-ufg-rnp-br*).*$'
+          :definition: 'ufg-upstream'
+
+        - :name: 'ufpe-federation'
+          :pattern: '^(fed-fibre-ufpe-br*).*$'
+          :definition: 'ufpe-upstream'
+
+        - :name: 'ufrgs-federation'
+          :pattern: '^(fed-fibre-ufrgs-br*).*$'
+          :definition: 'ufrgs-upstream'
+
+    - :url: 'http://10.139.11.206:15672'
+      :upstreams:
+        - :name: 'central-upstream'
+          :uri: 'amqp://testbed:testbed@10.128.0.210'
+      :policies:
+        - :name: 'fed-central'
+          :pattern: '^(fed-rnp-br*).*$'
+          :definition: 'central-upstream'
+
+        - :name: 'fed-ufrgs'
+          :pattern: '^(fed-fibre-ufrgs-br*).*$'
+          :definition: 'central-upstream'

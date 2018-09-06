@@ -1,0 +1,144 @@
+#!/usr/bin/env ruby
+
+BIN_DIR = File.dirname(File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__)
+TOP_DIR = File.join(BIN_DIR, '..')
+$: << File.join(TOP_DIR, 'lib')
+
+DESCR = %{
+Remove a topic/queue or a set of topics/queues from RabbitMQ Broker.
+
+}
+
+# The following is to work around a bug in activesupport triggered by
+# the JWT library which is used only in the AMQP transport, os it
+# fails quietly if that library is not installed in XMPP deployments
+begin; require 'json/jwt'; rescue Exception; end
+
+
+require 'optparse'
+require 'yaml'
+require 'highline/import'
+require 'net/http'
+require 'cgi'
+
+OP_MODE = :development
+
+opts = {
+    communication: {
+        #url: 'xmpp://srv.mytestbed.net',
+        #auth: {}
+    },
+    eventloop: { type: :em},
+    logging: {
+        level: 'info'
+    }
+}
+
+@user = nil
+@password = nil
+federation_conf = nil
+
+op = OptionParser.new
+op.banner = "Usage: #{op.program_name} [options] topic1 topic2 ...\n#{DESCR}\n"
+
+op.on '-file', '--file FILE NAME', "File with federation information" do |f|
+  federation_conf = YAML.load_file(f)
+end
+
+op.on '-u', '--user USERNAME', "Username of rabbitmq" do |u|
+  @user = u
+end
+
+op.on '-p', '--password PASSWORD', "Password to rabbitmq user given in -u" do |p|
+  @password = p
+end
+
+op.on_tail('-h', "--help", "Show this message") { $stderr.puts op; exit }
+op.parse(ARGV)
+
+unless federation_conf and @user and @password
+  $stderr.puts "ERROR: Missing declaration of federation information file, user or password\n"
+  $stderr.puts op
+  exit(-1)
+end
+
+def put_request(url, res_desc)
+  puts "PUT request to #{url}\n"
+
+  uri = URI.parse(url)
+  http = Net::HTTP.new(address=uri.host, port=uri.port)
+
+  request = Net::HTTP::Put.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
+  request.basic_auth @user, @password
+  request.body = res_desc.to_json
+
+  http.request(request)
+end
+
+def configure_federation_upstream(federation_upstreams_info)
+  puts "Configuring federation upstreams: #{federation_upstreams_info}"
+
+  base_url = federation_upstreams_info[:url]
+  upstreams = federation_upstreams_info[:upstreams]
+  for upstream in upstreams
+    name = upstream[:name]
+    policy_desc = upstream[:desc]
+    url = "#{base_url}/api/parameters/federation-upstream/%2f/#{name}"
+    put_request(url, policy_desc)
+  end
+end
+
+def configure_policies(policies_info)
+  puts "Configuring policies: #{policies_info}"
+
+  base_url = policies_info[:url]
+  policies = policies_info[:policies]
+  for policy in policies
+    name = policy[:name]
+    policy_desc = policy[:desc]
+    url = "#{base_url}/api/policies/%2f/#{name}"
+    put_request(url, policy_desc)
+  end
+end
+
+def configure_federation(federation_def)
+  for fed_input in federation_def
+    configure_federation_upstream(fed_input)
+    configure_policies(fed_input)
+  end
+end
+
+def read_federation_conf_file(federation_conf)
+  federation_info = []
+  federation_conf[:federation_info][:subauthorities].each do |subauthority|
+    new_federation_input = {
+        :url => subauthority[:url],
+    }
+
+    upstreams = []
+    subauthority[:upstreams].each {|policy|
+      name = policy[:name]
+      uri = policy[:uri]
+      new_upstream = {"component" => "federation-upstream","vhost" => "/", "name" => name, "value" =>
+          {"uri" => uri, "max-hops"=> 1,"ack-mode"=> "on-confirm", "trust-user-id"=> false}}
+      upstreams << {:name => name, :desc => new_upstream}
+    }
+    new_federation_input[:upstreams] = upstreams
+
+    policies = []
+    subauthority[:policies].each {|policy|
+      name = policy[:name]
+      pattern = policy[:pattern]
+      definition = policy[:definition]
+      new_policy = {"pattern" => pattern, "definition" => {"federation-upstream" => definition}, "priority" => 0, "apply-to" => "all"}
+      policies << {:name => name, :desc => new_policy}
+    }
+    new_federation_input[:policies] = policies
+
+    federation_info << new_federation_input
+  end
+  return federation_info
+end
+
+federation_def = read_federation_conf_file(federation_conf)
+configure_federation(federation_def)

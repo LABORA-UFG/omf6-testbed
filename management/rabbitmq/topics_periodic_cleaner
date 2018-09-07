@@ -93,11 +93,17 @@ def put_request(url, res_desc)
   body
 end
 
-def filter_topics_with_pattern(topics, pattern)
+def filter_topics_with_pattern(topics, pattern, scape=false)
   if pattern == "*"
     topics
   else
-    topics.select { |topic| topic["name"] =~ /#{pattern}/ }
+    regex = nil
+    unless scape
+      regex = /#{pattern}/
+    else
+      regex = Regexp.new(Regexp.quote(pattern))
+    end
+    topics.select { |topic| topic["name"] =~ regex }
   end
 end
 
@@ -131,16 +137,13 @@ def clean_from_center(authority_url, base_url, domain)
   central_topics = get_request(url)
 
   federated_central_topics = filter_topics_with_pattern(central_topics, "federation: .*fed-#{domain}.*")
-  federated_central_topics_names = extract_topics_names(federated_central_topics)
   local_central_topics = filter_topics_with_pattern(central_topics, "^fed-#{domain}.*")
-  local_central_topics_names = extract_topics_names(local_central_topics)
 
   url = "#{base_url}/api/exchanges"
   sub_topics = get_request(url)
   local_sub_topics = filter_topics_with_pattern(sub_topics, "^fed-#{domain}.*")
   local_sub_topics_names = extract_topics_names(local_sub_topics)
   federated_sub_topics = filter_topics_with_pattern(sub_topics, "federation: .*fed-#{domain}.*")
-  federated_sub_topics_names = extract_topics_names(local_sub_topics)
 
   topics_to_delete = []
   for central_topic in federated_central_topics
@@ -151,15 +154,15 @@ def clean_from_center(authority_url, base_url, domain)
   end
 
   for topic_name in topics_to_delete
-    federated_central = filter_topics_with_pattern(federated_central_topics, topic_name)
+    federated_central = filter_topics_with_pattern(federated_central_topics, topic_name, transform=true)
     for topic in federated_central
       delete_topic(authority_url, topic)
     end
-    local_central = filter_topics_with_pattern(local_central_topics, topic_name)
+    local_central = filter_topics_with_pattern(local_central_topics, topic_name,transform=true)
     for topic in local_central
       delete_topic(authority_url, topic)
     end
-    federated_sub = filter_topics_with_pattern(federated_sub_topics, topic_name)
+    federated_sub = filter_topics_with_pattern(federated_sub_topics, topic_name,transform=true)
     for topic in federated_sub
       delete_topic(base_url, topic)
     end
@@ -171,44 +174,40 @@ def clean_from_sub(authority_url, base_url, domain)
   central_topics = get_request(url)
 
   federated_central_topics = filter_topics_with_pattern(central_topics, "federation: .*fed-#{domain}.*")
-  federated_central_topics_names = extract_topics_names(federated_central_topics)
   local_central_topics = filter_topics_with_pattern(central_topics, "^fed-#{domain}.*")
-  local_central_topics_names = extract_topics_names(local_central_topics)
 
   url = "#{base_url}/api/exchanges"
   sub_topics = get_request(url)
   local_sub_topics = filter_topics_with_pattern(sub_topics, "^fed-#{domain}.*")
-  local_sub_topics_names = extract_topics_names(local_sub_topics)
   federated_sub_topics = filter_topics_with_pattern(sub_topics, "federation: .*fed-#{domain}.*")
-  federated_sub_topics_names = extract_topics_names(local_sub_topics)
 
   topics_to_delete = []
   for local_sub_topic in local_sub_topics
     topic_name = local_sub_topic['name']
-    federated_sub_topics = filter_topics_with_pattern(federated_sub_topics, topic_name)
-    unless federated_sub_topics
+    federated_sub_topics = filter_topics_with_pattern(federated_sub_topics, topic_name,scape=true)
+    if federated_sub_topics.empty?
       topics_to_delete << topic_name
     end
-    federated_sub_topics = filter_topics_with_pattern(federated_central_topics, topic_name)
-    unless federated_sub_topics
+    federated_sub_topics = filter_topics_with_pattern(federated_central_topics, topic_name,scape=true)
+    if federated_sub_topics.empty?
       topics_to_delete << topic_name
     end
   end
 
   for topic_name in topics_to_delete
-    federated_central = filter_topics_with_pattern(federated_central_topics, topic_name)
+    federated_central = filter_topics_with_pattern(federated_central_topics, topic_name,scape=true)
     for topic in federated_central
       delete_topic(authority_url, topic)
     end
-    local_central = filter_topics_with_pattern(local_central_topics, topic_name)
+    local_central = filter_topics_with_pattern(local_central_topics, topic_name,scape=true)
     for topic in local_central
       delete_topic(authority_url, topic)
     end
-    federated_sub = filter_topics_with_pattern(federated_sub_topics, topic_name)
+    federated_sub = filter_topics_with_pattern(federated_sub_topics, topic_name,scape=true)
     for topic in federated_sub
       delete_topic(base_url, topic)
     end
-    local_sub = filter_topics_with_pattern(local_sub_topics, topic_name)
+    local_sub = filter_topics_with_pattern(local_sub_topics, topic_name,scape=true)
     for topic in local_sub
       delete_topic(base_url, topic)
     end

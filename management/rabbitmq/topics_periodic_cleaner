@@ -132,7 +132,7 @@ def delete_topic(base_url, topic)
   delete_request(delete_url)
 end
 
-def clean_from_center(authority_url, base_url, domain)
+def clean_zombies_from_center(authority_url, base_url, domain)
   url = "#{authority_url}/api/exchanges"
   central_topics = get_request(url)
 
@@ -169,7 +169,7 @@ def clean_from_center(authority_url, base_url, domain)
   end
 end
 
-def clean_from_sub(authority_url, base_url, domain)
+def clean_zombies_from_sub(authority_url, base_url, domain)
   url = "#{authority_url}/api/exchanges"
   central_topics = get_request(url)
 
@@ -215,29 +215,29 @@ def clean_from_sub(authority_url, base_url, domain)
 
 end
 
-def clean_topics(config)
-  puts "Cleaning topics: #{config}"
+def clean_zombie_topics(config)
+  puts "Cleaning zombie topics: #{config}"
   authority = config[:authority]
   subauthorities = config[:subauthorities]
 
   authority_domain = authority[:domain]
-  authority_url = authority[:url]
+  authority_url = authority[:http_url]
 
   for subauthority in subauthorities
     domain = subauthority[:domain]
-    base_url = subauthority[:url]
+    base_url = subauthority[:http_url]
 
-    clean_from_center(authority_url, base_url, domain)
-    clean_from_center(base_url, authority_url, domain)
+    clean_zombies_from_center(authority_url, base_url, domain)
+    clean_zombies_from_center(base_url, authority_url, domain)
   end
 
   for subauthority in subauthorities
-    base_url = subauthority[:url]
+    base_url = subauthority[:http_url]
 
-    clean_from_sub(authority_url, base_url, authority_domain)
-    clean_from_sub(base_url, authority_url, authority_domain)
+    clean_zombies_from_sub(authority_url, base_url, authority_domain)
+    clean_zombies_from_sub(base_url, authority_url, authority_domain)
   end
 
 end
 
-clean_topics(config)
+clean_zombie_topics(config)

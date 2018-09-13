@@ -1,0 +1,8 @@
+:domain: 'fibre.rnp.br'
+:auth:
+  :entity_cert: '/root/.omf/user_cert.pem'
+  :trusted_roots: '/root/.omf/trusted_roots'
+:rest:
+  :url: 'http://10.136.11.112:15672'
+:amqp:
+  :url: 'amqp://testbed:testbed@10.136.11.112'

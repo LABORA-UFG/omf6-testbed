@@ -36,12 +36,12 @@ opts = {
 
 @user = nil
 @password = nil
-config = nil
+config_filename = nil
 
 op = OptionParser.new
 op.banner = "Usage: #{op.program_name} [options] topic1 topic2 ...\n#{DESCR}\n"
-op.on '-f', '--file FILE NAME', "Configuration file" do |f|
-  config = YAML.load_file(f)
+op.on '-c', '--config FILE', "Configuration file" do |f|
+  config_filename = f
 end
 
 op.on '-u', '--user USERNAME', "Username of rabbitmq" do |u|
@@ -55,7 +55,7 @@ end
 op.on_tail('-h', "--help", "Show this message") { $stderr.puts op; exit }
 op.parse(ARGV)
 
-unless config and @user and @password
+unless config_filename and @user and @password
   $stderr.puts "ERROR: Missing declaration of --file\n\n"
   $stderr.puts op
   exit(-1)
@@ -132,32 +132,48 @@ def delete_topic(base_url, topic)
   delete_request(delete_url)
 end
 
-def clean_orphan_from_sub(http_url, amqp_url, domain)
+def find_related_locals(rc_topic, local_topics)
+  local_topics.select { |topic| topic["name"] =~ /.*#{rc_topic}.*/ }
+end
+
+def clean_orphan_from_sub(http_url, amqp_url, domain, config_filename)
   url = "#{http_url}/api/exchanges"
   sub_topics = get_request(url)
 
-  local_sub_topics = filter_topics_with_pattern(sub_topics, "^fed-#{domain}.*")
+  rc_topics = filter_topics_with_pattern(sub_topics, "(^fed-#{domain}.*|^am_controller)")
+  local_topics = filter_topics_with_pattern(sub_topics, "(^local_.*)")
 
-  for topic in local_sub_topics
+  for topic in rc_topics
     topic_url = "#{amqp_url}/#{topic['name']}"
     puts topic_url
-    `omf_send_request -a -r #{topic_url}`
+    output = `omf_send_request -c #{config_filename} -r #{topic_url} uid`
+    num_lines = output.split("\n").size
+    if num_lines <= 1
+      delete_topic(http_url, topic)
+      related_topics = find_related_locals(topic['name'], local_topics)
+      for related_topic in related_topics
+        delete_topic(http_url, related_topic)
+      end
+    end
   end
 
 end
 
-def clean_orphan_topics(config)
+def clean_orphan_topics(config_filename)
+  config = YAML.load_file(config_filename)
+
   puts "Cleaning orphan topics: #{config}"
-  subauthorities = config[:subauthorities]
+  rest_conf = config[:rest]
+  amqp_conf = config[:amqp]
 
-  for subauthority in subauthorities
-    domain = subauthority[:domain]
-    base_http_url = subauthority[:http_url]
-    base_amqp_url = subauthority[:amqp_url]
 
-    clean_orphan_from_sub(base_http_url, base_amqp_url,domain)
-  end
+  domain = config[:domain].gsub(".", "-")
+  base_http_url = rest_conf[:url]
+  base_amqp_url = amqp_conf[:url]
+
+  clean_orphan_from_sub(base_http_url, base_amqp_url, domain, config_filename)
+
 
 end
 
-clean_orphan_topics(config)
+clean_orphan_topics(config_filename)

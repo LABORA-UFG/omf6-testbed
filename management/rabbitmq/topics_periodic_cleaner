@@ -225,11 +225,11 @@ def clean_zombie_topics(config)
   subauthorities = config[:subauthorities]
 
   authority_domain = authority[:domain]
-  authority_url = authority[:http_url]
+  authority_url = authority[:url]
 
   for subauthority in subauthorities
     domain = subauthority[:domain]
-    base_url = subauthority[:http_url]
+    base_url = subauthority[:url]
 
     begin
       clean_from_center(authority_url, base_url, domain)
@@ -240,7 +240,7 @@ def clean_zombie_topics(config)
   end
 
   for subauthority in subauthorities
-    base_url = subauthority[:http_url]
+    base_url = subauthority[:url]
 
     begin
       clean_from_sub(authority_url, base_url, authority_domain)

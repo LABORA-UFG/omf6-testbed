@@ -70,9 +70,13 @@ def get_request(url)
   request = Net::HTTP::Get.new(uri.request_uri, initheader = {'Content-Type' =>'application/json'})
   request.basic_auth @user, @password
 
-  response = http.request(request)
+  begin
+    response = http.request(request)
+    body = JSON.parse(response.body)
+  rescue => e
+    error "Could not request the data"
+  end
 
-  body = JSON.parse(response.body)
   body
 end
 

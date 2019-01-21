@@ -232,8 +232,8 @@ def clean_zombie_topics(config)
     base_url = subauthority[:url]
 
     begin
-      clean_from_center(authority_url, base_url, domain)
-      clean_from_center(base_url, authority_url, domain)
+      clean_zombies_from_center(authority_url, base_url, domain)
+      clean_zombies_from_center(base_url, authority_url, domain)
     rescue => e
       error "Problem to clean topics of authority: #{domain}"
     end
